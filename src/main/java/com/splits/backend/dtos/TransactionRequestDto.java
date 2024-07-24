@@ -1,6 +1,5 @@
 package com.splits.backend.dtos;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
@@ -8,9 +7,11 @@ import java.util.List;
 import java.util.Map;
 
 @Data
-@AllArgsConstructor
 @Builder
-public class ExpensesDto {
-    private String expensesId;
+public class TransactionRequestDto {
+    private String transactionName;
+    private Double transactionValue;
+    private String paidBy;
+    private String splitAmong;
     private Map<String, List<Double>> expensesMap;
 }

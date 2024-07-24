@@ -27,7 +27,7 @@ public class UserController {
         var result = userService.createUserOrLoginUser(body);
         return ResponseEntity.status(201).body(result);
     }
-    @GetMapping("/{userId}")
+    @GetMapping("/{userId}/groups")
     public ResponseEntity<List<GroupResponseDto>> getAllGroupsOfUser(@PathVariable String userId){
         var result = userService.findUserById(userId);
         if(result == null) return ResponseEntity.ok().body(List.of());

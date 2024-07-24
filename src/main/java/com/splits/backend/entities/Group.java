@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.util.List;
+import java.util.Map;
+
 
 @Data
 @AllArgsConstructor
@@ -26,8 +29,12 @@ public class Group {
 
     private String members;
 
-    @OneToOne
+    @OneToMany(mappedBy = "group")
+    private List<Transaction> transactions;
+
+    @Convert(converter = ExpensesMapConverter.class)
+    @Column(columnDefinition = "text")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private Expenses expenses;
+    private Map<String, List<Double>> expensesMap;
 }

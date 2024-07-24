@@ -17,5 +17,5 @@ public class GroupResponseDto {
 
     private String date;
 
-    private String[] members;
+    private String[] groupMembers;
 }
