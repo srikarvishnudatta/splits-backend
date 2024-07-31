@@ -9,10 +9,7 @@ import com.splits.backend.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class UserService {
@@ -45,23 +42,22 @@ public class UserService {
                 .transactions(new ArrayList<>())
                 .build();
         var result = groupRepo.findGroupsByGroupOwner(owner);
-        if (result == null || result.isEmpty()){
-            // create a new array list;
-            result = new ArrayList<>();
-        }
         result.add(newgroup);
         owner.setGroupList(result);
         var expenseMap = createExpensesTable(newgroup.getMembers().split(" "));
-        groupRepo.save(newgroup);
-        userRepo.save(owner);
         newgroup.setExpensesMap(expenseMap);
         groupRepo.save(newgroup);
+        userRepo.save(owner);
         return newgroup.getGroupId();
     }
-    private HashMap<String, List<Double>> createExpensesTable(String[] members){
-        var map = new HashMap<String, List<Double>>();
-        for (String member: members) {
-            map.put(member, Collections.nCopies(members.length, 0.0));
+    private HashMap<String, Map<String, Double>> createExpensesTable(String[] members){
+        var map = new HashMap<String, Map<String, Double>>();
+        for (String member: members){
+            var innerMap = new HashMap<String, Double>();
+            for (String inner: members){
+                innerMap.put(inner, 0.0);
+            }
+            map.put(member, innerMap);
         }
         return map;
     }

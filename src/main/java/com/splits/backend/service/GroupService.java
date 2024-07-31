@@ -2,16 +2,13 @@ package com.splits.backend.service;
 
 import com.splits.backend.Repository.GroupRepo;
 import com.splits.backend.Repository.TransactionRepo;
+import com.splits.backend.dtos.DeleteTransactionDto;
 import com.splits.backend.dtos.GroupResponseDto;
 import com.splits.backend.dtos.TransactionRequestDto;
-import com.splits.backend.entities.ExpensesMapConverter;
-import com.splits.backend.entities.Group;
-import com.splits.backend.entities.Transaction;
-import com.splits.backend.entities.User;
+import com.splits.backend.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -21,7 +18,6 @@ public class GroupService {
 
     private final GroupRepo groupRepo;
     private final TransactionRepo transactionRepo;
-
 
     @Autowired
     public GroupService(GroupRepo groupRepo, TransactionRepo transactionRepo ) {
@@ -45,28 +41,65 @@ public class GroupService {
         return result.getGroupOwner().getUserId();
     }
     public List<Transaction> getTransactionsByGroupId(String groupId){
-        var groupFound = groupRepo.findById(groupId).orElseThrow(()-> new RuntimeException("Cannot find group"));
+        var groupFound = groupRepo.findGroupByGroupId(groupId).orElseThrow(()-> new RuntimeException("Cannot find group"));
         return transactionRepo.findTransactionsByGroup(groupFound);
     }
-    public Map<String, List<Double>> getExpenseMap(String groupId){
+    public Map<String, Map<String, Double>> getExpenseMap(String groupId){
         return new ExpensesMapConverter().convertToEntityAttribute(groupRepo.findExpensesMapByGroupId(groupId));
     }
     public void addNewTransaction(String groupId, TransactionRequestDto reqBody){
-        var group = groupRepo.findGroupByGroupId(groupId).orElseThrow(() -> new RuntimeException("Cannot find group"));
-        var newTransaction = Transaction.builder()
-                .transactionName(reqBody.getTransactionName())
-                .transactionValue(reqBody.getTransactionValue())
-                .paidBy(reqBody.getPaidBy())
-                .splitAmong(reqBody.getSplitAmong())
-                .group(group)
-                .build();
+        var groupFound = groupRepo.findGroupByGroupId(groupId).orElseThrow(() -> new RuntimeException("Cannot find group"));
+        var transactions = groupFound.getTransactions();
 
-        var transactions = group.getTransactions();
-        if (transactions.isEmpty()) transactions = new ArrayList<>();
+        var newTransaction = Transaction.builder().transactionName(reqBody.getTransactionName())
+                .paidBy(reqBody.getPaidBy())
+                .transactionValue(reqBody.getTransactionValue())
+                .build();
+        var expenseMap = groupFound.getExpensesMap();
+        expenseMap = updateExpenseMap(expenseMap, reqBody.getPaidBy(), reqBody.getSplitAmong());
         transactions.add(newTransaction);
-        group.setTransactions(transactions);
-        group.setExpensesMap(reqBody.getExpensesMap());
-        groupRepo.save(group);
+        groupFound.setExpensesMap(expenseMap);
+        groupFound.setTransactions(transactions);
+        newTransaction.setGroup(groupFound);
+        newTransaction.setSplitAmong(reqBody.getSplitAmong());
         transactionRepo.save(newTransaction);
+        groupRepo.save(groupFound);
     }
+    public Map<String, Map<String, Double>> updateExpenseMap(Map<String, Map<String, Double>> expensesMap, String paidBy, Map<String, Double> fractions){
+        var members = fractions.keySet();
+        for (var member: members){
+            var value = expensesMap.get(paidBy).get(member);
+           value += fractions.get(member);
+           expensesMap.get(paidBy).put(member, value);
+           value = expensesMap.get(member).get(paidBy);
+           value -= fractions.get(member);
+           expensesMap.get(member).put(paidBy, value);
+        }
+        return expensesMap;
+    }
+    public Transaction getTransaction(String transactionId){
+        return transactionRepo.findTransactionByTransactionId(transactionId).orElseThrow(() -> new RuntimeException("Cannot find transaction"));
+    }
+
+    public String deleteTransaction(String transactionId, String groupId) {
+        var transactionFound = transactionRepo.findTransactionByTransactionId(transactionId).orElseThrow(() -> new RuntimeException("Cannot find transaction"));
+        transactionRepo.delete(transactionFound);
+        var group = groupRepo.findGroupByGroupId(groupId).orElseThrow(() -> new RuntimeException("Cannot find group"));
+        var expensesMap = group.getExpensesMap();
+        var paidBy = transactionFound.getPaidBy();
+        var splitAmong = transactionFound.getSplitAmong();
+        for(var member: expensesMap.keySet()){
+            var value = expensesMap.get(paidBy).get(member);
+            value -= splitAmong.get(member);
+            expensesMap.get(paidBy).put(member, value);
+            value = expensesMap.get(member).get(paidBy);
+            value += splitAmong.get(member);
+            expensesMap.get(member).put(paidBy, value);
+        }
+        group.setExpensesMap(expensesMap);
+        group.getTransactions().remove(transactionFound);
+        groupRepo.save(group);
+        return "deleted";
+    }
+
 }

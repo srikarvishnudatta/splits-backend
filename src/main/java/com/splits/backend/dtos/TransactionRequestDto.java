@@ -12,6 +12,5 @@ public class TransactionRequestDto {
     private String transactionName;
     private Double transactionValue;
     private String paidBy;
-    private String splitAmong;
-    private Map<String, List<Double>> expensesMap;
+    private Map<String, Double> splitAmong;
 }

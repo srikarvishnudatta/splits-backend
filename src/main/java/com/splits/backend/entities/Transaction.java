@@ -1,10 +1,12 @@
 package com.splits.backend.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.nio.DoubleBuffer;
 import java.util.List;
 import java.util.Map;
 
@@ -19,12 +21,15 @@ public class Transaction {
     @UuidGenerator
     private String transactionId;
 
+    @JsonBackReference
     @ManyToOne
-    @JoinColumn(name = "transactions")
-    private Group group;
+    @JoinColumn(name = "groupId")
+    Group group;
 
     private String transactionName;
     private Double transactionValue;
     private String paidBy;
-    private String splitAmong;
+
+    @Convert(converter = SplitAmongConverter.class)
+    private Map<String, Double> splitAmong;
 }

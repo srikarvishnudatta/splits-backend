@@ -1,9 +1,12 @@
 package com.splits.backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +25,7 @@ public class Group {
     private String name;
     private String createdAt;
 
+    @JsonBackReference
     @ManyToOne
     @ToString.Exclude
     @JoinColumn(name = "userId")
@@ -29,12 +33,13 @@ public class Group {
 
     private String members;
 
-    @OneToMany(mappedBy = "group")
-    private List<Transaction> transactions;
+    @JsonManagedReference
+    @OneToMany(mappedBy = "group", fetch = FetchType.EAGER)
+    List<Transaction> transactions = new ArrayList<>();
 
     @Convert(converter = ExpensesMapConverter.class)
     @Column(columnDefinition = "text")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private Map<String, List<Double>> expensesMap;
+    private Map<String, Map<String, Double>> expensesMap;
 }

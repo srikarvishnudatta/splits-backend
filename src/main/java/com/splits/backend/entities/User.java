@@ -1,5 +1,6 @@
 package com.splits.backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
@@ -21,7 +22,8 @@ public class User {
     @Column(unique = true)
     private String email;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "groupOwner")
-            @ToString.Exclude
+    @ToString.Exclude
     List<Group> groupList = new ArrayList<>();
 }

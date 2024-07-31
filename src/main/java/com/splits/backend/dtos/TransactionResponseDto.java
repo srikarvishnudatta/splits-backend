@@ -12,6 +12,6 @@ import java.util.Map;
 @AllArgsConstructor
 @Builder
 public class TransactionResponseDto {
-    private Map<String, List<Double>> expensesMap;
+    private Map<String, Map<String, Double>> expensesMap;
     private List<Transaction> transactions;
 }

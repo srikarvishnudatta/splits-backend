@@ -4,27 +4,26 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
-import lombok.NoArgsConstructor;
 
-import java.util.List;
 import java.util.Map;
 
 @Converter
-public class ExpensesMapConverter implements AttributeConverter<Map<String, Map<String, Double>>, String> {
+public class SplitAmongConverter implements AttributeConverter<Map<String, Double>, String> {
     public final ObjectMapper objectMapper = new ObjectMapper();
     @Override
-    public String convertToDatabaseColumn(Map<String, Map<String, Double>> attribute) {
+    public String convertToDatabaseColumn(Map<String, Double> stringDoubleMap) {
         try{
-            return objectMapper.writeValueAsString(attribute);
+            return objectMapper.writeValueAsString(stringDoubleMap);
         }catch (Exception e){
             throw new IllegalArgumentException("Cannot write json", e);
         }
     }
 
     @Override
-    public Map<String, Map<String, Double>> convertToEntityAttribute(String dbData) {
+    public Map<String, Double> convertToEntityAttribute(String s) {
         try {
-            return objectMapper.readValue(dbData, new TypeReference<Map<String, Map<String, Double>>>() {});
+            return objectMapper.readValue(s, new TypeReference<>() {
+            });
         }catch (Exception e){
             throw new IllegalArgumentException("Cannot convert back to json", e);
         }
