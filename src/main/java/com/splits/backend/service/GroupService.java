@@ -2,7 +2,6 @@ package com.splits.backend.service;
 
 import com.splits.backend.Repository.GroupRepo;
 import com.splits.backend.Repository.TransactionRepo;
-import com.splits.backend.dtos.DeleteTransactionDto;
 import com.splits.backend.dtos.GroupResponseDto;
 import com.splits.backend.dtos.TransactionRequestDto;
 import com.splits.backend.entities.*;
@@ -50,7 +49,6 @@ public class GroupService {
     public void addNewTransaction(String groupId, TransactionRequestDto reqBody){
         var groupFound = groupRepo.findGroupByGroupId(groupId).orElseThrow(() -> new RuntimeException("Cannot find group"));
         var transactions = groupFound.getTransactions();
-
         var newTransaction = Transaction.builder().transactionName(reqBody.getTransactionName())
                 .paidBy(reqBody.getPaidBy())
                 .transactionValue(reqBody.getTransactionValue())
@@ -65,20 +63,29 @@ public class GroupService {
         transactionRepo.save(newTransaction);
         groupRepo.save(groupFound);
     }
-    public Map<String, Map<String, Double>> updateExpenseMap(Map<String, Map<String, Double>> expensesMap, String paidBy, Map<String, Double> fractions){
-        var members = fractions.keySet();
-        for (var member: members){
-            var value = expensesMap.get(paidBy).get(member);
-           value += fractions.get(member);
-           expensesMap.get(paidBy).put(member, value);
-           value = expensesMap.get(member).get(paidBy);
-           value -= fractions.get(member);
-           expensesMap.get(member).put(paidBy, value);
-        }
-        return expensesMap;
-    }
     public Transaction getTransaction(String transactionId){
         return transactionRepo.findTransactionByTransactionId(transactionId).orElseThrow(() -> new RuntimeException("Cannot find transaction"));
+    }
+    public Map<String, Map<String, Double>> updateExpenseMap(Map<String, Map<String, Double>> expensesMap, String paidBy, Map<String, Double> splitAmong){
+        return mapHelper(true, expensesMap, paidBy, splitAmong);
+    }
+    // toggle true, update map, else delete from map
+    private Map<String, Map<String, Double>> mapHelper(boolean toggle, Map<String, Map<String, Double>> expensesMap, String paidBy, Map<String, Double> splitAmong){
+        var members = splitAmong.keySet();
+        for (var member: members){
+            var value = expensesMap.get(paidBy).get(member);
+            if(toggle) value += splitAmong.get(member);
+            else value -= splitAmong.get(member);
+            value = Math.round(value * 100.0) / 100.0;
+            expensesMap.get(paidBy).put(member, value);
+
+            value = expensesMap.get(member).get(paidBy);
+            if(toggle) value -= splitAmong.get(member);
+            else value += splitAmong.get(member);
+            value = Math.round(value * 100.0) / 100.0;
+            expensesMap.get(member).put(paidBy, value);
+        }
+        return expensesMap;
     }
 
     public String deleteTransaction(String transactionId, String groupId) {
@@ -88,18 +95,29 @@ public class GroupService {
         var expensesMap = group.getExpensesMap();
         var paidBy = transactionFound.getPaidBy();
         var splitAmong = transactionFound.getSplitAmong();
-        for(var member: expensesMap.keySet()){
-            var value = expensesMap.get(paidBy).get(member);
-            value -= splitAmong.get(member);
-            expensesMap.get(paidBy).put(member, value);
-            value = expensesMap.get(member).get(paidBy);
-            value += splitAmong.get(member);
-            expensesMap.get(member).put(paidBy, value);
-        }
-        group.setExpensesMap(expensesMap);
+        group.setExpensesMap(mapHelper(false, expensesMap, paidBy, splitAmong));
         group.getTransactions().remove(transactionFound);
         groupRepo.save(group);
         return "deleted";
     }
 
+    public void updateTransaction(String transactionId, TransactionRequestDto reqBody){
+        var transactionFound = transactionRepo.findTransactionByTransactionId(transactionId).orElseThrow(() -> new RuntimeException("Cannot find transaction"));
+        var groupFound = transactionFound.getGroup();
+        var expensesMap = groupFound.getExpensesMap();
+        var paidBy = transactionFound.getPaidBy();
+        transactionFound.setPaidBy(paidBy);
+        transactionFound.setTransactionName(reqBody.getTransactionName());
+        transactionFound.setTransactionValue(reqBody.getTransactionValue());
+        // basically remove the old value from the transaction
+        var splitAmong = transactionFound.getSplitAmong();
+        mapHelper(false, expensesMap, paidBy, splitAmong);
+
+        // add the new value to the transaction
+        var newSplitAmong = reqBody.getSplitAmong();
+        mapHelper(true, expensesMap, paidBy, newSplitAmong);
+        groupFound.setExpensesMap(expensesMap);
+        transactionRepo.save(transactionFound);
+        groupRepo.save(groupFound);
+    }
 }

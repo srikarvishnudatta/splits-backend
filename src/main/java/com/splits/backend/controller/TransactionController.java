@@ -1,5 +1,6 @@
 package com.splits.backend.controller;
 
+
 import com.splits.backend.dtos.DeleteTransactionDto;
 import com.splits.backend.dtos.TransactionRequestDto;
 import com.splits.backend.dtos.TransactionResponseDto;
@@ -37,5 +38,10 @@ public class TransactionController {
     @DeleteMapping("/{transactionId}/delete")
     public String deleteTransaction(@PathVariable String transactionId, @RequestBody DeleteTransactionDto body){
         return groupService.deleteTransaction(transactionId, body.getGroupId());
+    }
+    @PatchMapping("/{transactionId}/update")
+    public String updateTransaction(@PathVariable String transactionId, @RequestBody TransactionRequestDto body){
+        groupService.updateTransaction(transactionId, body);
+        return "ok";
     }
 }
