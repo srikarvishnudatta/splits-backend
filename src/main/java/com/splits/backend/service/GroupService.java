@@ -104,6 +104,7 @@ public class GroupService {
     public void updateTransaction(String transactionId, TransactionRequestDto reqBody){
         var transactionFound = transactionRepo.findTransactionByTransactionId(transactionId).orElseThrow(() -> new RuntimeException("Cannot find transaction"));
         var groupFound = transactionFound.getGroup();
+        groupFound.getTransactions().remove(transactionFound);
         var expensesMap = groupFound.getExpensesMap();
         var paidBy = transactionFound.getPaidBy();
         transactionFound.setPaidBy(paidBy);
@@ -115,8 +116,10 @@ public class GroupService {
 
         // add the new value to the transaction
         var newSplitAmong = reqBody.getSplitAmong();
-        mapHelper(true, expensesMap, paidBy, newSplitAmong);
+        mapHelper(true, expensesMap, reqBody.getPaidBy(), newSplitAmong);
+        transactionFound.setSplitAmong(newSplitAmong);
         groupFound.setExpensesMap(expensesMap);
+        groupFound.getTransactions().add(transactionFound);
         transactionRepo.save(transactionFound);
         groupRepo.save(groupFound);
     }
