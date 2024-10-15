@@ -15,7 +15,6 @@ public class GroupResponseDto {
 
     private String name;
 
-    private String date;
 
     private String[] groupMembers;
 }

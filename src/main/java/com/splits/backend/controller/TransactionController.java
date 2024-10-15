@@ -18,7 +18,7 @@ public class TransactionController {
         this.groupService = groupService;
     }
 
-    @GetMapping("/{groupId}/getTransactions")
+    @GetMapping("/{groupId}/transactions")
     public ResponseEntity<TransactionResponseDto> getAllTransactions(@PathVariable String groupId){
         var transactions = groupService.getTransactionsByGroupId(groupId);
         var response = TransactionResponseDto.builder()

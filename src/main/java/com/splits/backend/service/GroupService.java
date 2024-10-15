@@ -30,7 +30,7 @@ public class GroupService {
     }
     private GroupResponseDto convertDto(Group group){
         return GroupResponseDto.builder().groupId(group.getGroupId())
-                .date(group.getCreatedAt()).name(group.getName())
+                .name(group.getName())
                 .groupMembers(group.getMembers().split(" "))
                 .build();
     }
