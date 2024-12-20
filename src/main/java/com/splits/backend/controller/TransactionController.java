@@ -18,30 +18,30 @@ public class TransactionController {
         this.groupService = groupService;
     }
 
-    @GetMapping("/{groupId}/transactions")
-    public ResponseEntity<TransactionResponseDto> getAllTransactions(@PathVariable String groupId){
-        var transactions = groupService.getTransactionsByGroupId(groupId);
-        var response = TransactionResponseDto.builder()
-                .transactions(transactions)
-                .expensesMap(groupService.getExpenseMap(groupId))
-                .build();
-        return ResponseEntity.ok(response);
-    }
-    @GetMapping("/trans/{transactionId}")
-    public Transaction getTransaction(@PathVariable String transactionId){
-        return groupService.getTransaction(transactionId);
-    }
-    @PostMapping("/{groupId}/newTransaction")
-    public void addNewTransaction(@PathVariable String groupId, @RequestBody TransactionRequestDto reqBody){
-        groupService.addNewTransaction(groupId, reqBody);
-    }
-    @DeleteMapping("/{transactionId}/delete")
-    public String deleteTransaction(@PathVariable String transactionId, @RequestBody DeleteTransactionDto body){
-        return groupService.deleteTransaction(transactionId, body.getGroupId());
-    }
-    @PatchMapping("/{transactionId}/update")
-    public String updateTransaction(@PathVariable String transactionId, @RequestBody TransactionRequestDto body){
-        groupService.updateTransaction(transactionId, body);
-        return "ok";
-    }
+//    @GetMapping("/{groupId}/transactions")
+//    public ResponseEntity<TransactionResponseDto> getAllTransactions(@PathVariable String groupId){
+//        var transactions = groupService.getTransactionsByGroupId(groupId);
+//        var response = TransactionResponseDto.builder()
+//                .transactions(transactions)
+//                .expensesMap(groupService.getExpenseMap(groupId))
+//                .build();
+//        return ResponseEntity.ok(response);
+//    }
+//    @GetMapping("/trans/{transactionId}")
+//    public Transaction getTransaction(@PathVariable String transactionId){
+//        return groupService.getTransaction(transactionId);
+//    }
+//    @PostMapping("/{groupId}/newTransaction")
+//    public void addNewTransaction(@PathVariable String groupId, @RequestBody TransactionRequestDto reqBody){
+//        groupService.addNewTransaction(groupId, reqBody);
+//    }
+//    @DeleteMapping("/{transactionId}/delete")
+//    public String deleteTransaction(@PathVariable String transactionId, @RequestBody DeleteTransactionDto body){
+//        return groupService.deleteTransaction(transactionId, body.getGroupId());
+//    }
+//    @PatchMapping("/{transactionId}/update")
+//    public String updateTransaction(@PathVariable String transactionId, @RequestBody TransactionRequestDto body){
+//        groupService.updateTransaction(transactionId, body);
+//        return "ok";
+//    }
 }

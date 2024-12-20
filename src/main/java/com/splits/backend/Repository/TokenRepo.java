@@ -1,13 +1,12 @@
 package com.splits.backend.Repository;
 
-import com.splits.backend.entities.User;
+import com.splits.backend.entities.Tokens;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface UserRepo extends JpaRepository<User, String> {
-
-    Optional<User> findByUsername(String email);
+public interface TokenRepo extends JpaRepository<Tokens, Long> {
+    Optional<Tokens> findByToken(String token);
 }

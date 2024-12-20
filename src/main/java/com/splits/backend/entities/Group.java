@@ -28,18 +28,18 @@ public class Group {
     @JsonBackReference
     @ManyToOne
     @ToString.Exclude
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "id")
     User groupOwner;
 
     private String members;
 
-    @JsonManagedReference
-    @OneToMany(mappedBy = "group", fetch = FetchType.EAGER)
-    List<Transaction> transactions = new ArrayList<>();
+//    @JsonManagedReference
+//    @OneToMany(mappedBy = "group", fetch = FetchType.EAGER)
+//    List<Transaction> transactions = new ArrayList<>();
 
-    @Convert(converter = ExpensesMapConverter.class)
-    @Column(columnDefinition = "text")
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    private Map<String, Map<String, Double>> expensesMap;
+//    @Convert(converter = ExpensesMapConverter.class)
+//    @Column(columnDefinition = "text")
+//    @EqualsAndHashCode.Exclude
+//    @ToString.Exclude
+//    private Map<String, Map<String, Double>> expensesMap;
 }

@@ -1,8 +1,7 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/splits
+    url: jdbc:postgresql://db.lamfbtmfveovnlomoafu.supabase.co:5432/postgres?user=postgres&password=Xpense@2024
     driver-class-name: org.postgresql.Driver
-    username: postgres
   jpa:
     hibernate:
       ddl-auto: create-drop
@@ -13,4 +12,4 @@ spring:
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 server:
-  port: 8081
+  port: 8080
