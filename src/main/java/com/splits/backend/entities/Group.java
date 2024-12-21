@@ -8,7 +8,6 @@ import org.hibernate.annotations.UuidGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
 @Data
@@ -37,9 +36,4 @@ public class Group {
     @OneToMany(mappedBy = "group", fetch = FetchType.EAGER)
     List<Transaction> transactions = new ArrayList<>();
 
-    @Convert(converter = ExpensesMapConverter.class)
-    @Column(columnDefinition = "text")
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    private Map<String, Map<String, Double>> expensesMap;
 }

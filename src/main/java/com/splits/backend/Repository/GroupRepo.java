@@ -12,6 +12,9 @@ import java.util.Optional;
 
 @Repository
 public interface GroupRepo extends JpaRepository<Group, String> {
+
+    @Query(value = "SELECT * from groups WHERE user_Id = :userId", nativeQuery = true)
+    List<Group> findGroupsByUserId(@Param("userId") Long userId);
     List<Group> findGroupsByGroupOwner(User owner);
     Optional<Group> findGroupByGroupId(String groupId);
     @Query(value = "SELECT expenses_map FROM groups WHERE group_id = :groupId", nativeQuery = true)

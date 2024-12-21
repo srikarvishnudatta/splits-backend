@@ -3,7 +3,6 @@ package com.splits.backend.entities;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.UuidGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,11 +15,14 @@ import java.util.List;
 @Table(name = "users")
 public class User {
     @Id
-    @UuidGenerator
-    private String userId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long userId;
 
     @Column(unique = true)
-    private String email;
+    private String username;
+
+    @Column(nullable = false)
+    private String password;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "groupOwner")
