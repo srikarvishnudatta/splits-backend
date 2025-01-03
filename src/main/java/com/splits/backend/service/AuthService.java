@@ -23,7 +23,11 @@ public class AuthService {
         return body.getPassword().equals(user.get().getPassword());
     }
     public boolean createUser(UserDto body){
-        var finalUser = User.builder().username(body.getUsername()).password(body.getPassword()).build();
+        var finalUser = User.builder()
+                .username(body.getUsername())
+                .password(body.getPassword())
+                .groupList(new ArrayList<>())
+                .build();
         try{
             this.userRepo.save(finalUser);
             return true;

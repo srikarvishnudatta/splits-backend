@@ -30,7 +30,14 @@ public class Group {
     @JoinColumn(name = "userId")
     User groupOwner;
 
-    private String members;
+
+    @ManyToMany
+    @JoinTable(
+        name = "group_members",
+            joinColumns = @JoinColumn(name = "group_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> groupMembers;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "group", fetch = FetchType.EAGER)

@@ -25,7 +25,10 @@ public class User {
     private String password;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "groupOwner")
+    @OneToMany(mappedBy = "groupOwner", fetch = FetchType.EAGER)
     @ToString.Exclude
     List<Group> groupList = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "groupMembers")
+    private List<Group> memberGroups;
 }

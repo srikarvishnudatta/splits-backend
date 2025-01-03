@@ -32,8 +32,8 @@ public class GroupService {
         this.addMemberService = addMemberService;
     }
 
-    public List<GroupResponseDto> getAllGroupsByUserId(String id){
-       var result = groupRepo.findGroupsByUserId(Long.parseLong(id));
+    public List<GroupResponseDto> getAllGroupsByUserId(long id){
+       var result = groupRepo.findGroupsByUserId(id);
        return result.stream().map(this::convertDto).collect(Collectors.toList());
     }
 
@@ -41,24 +41,22 @@ public class GroupService {
         return GroupResponseDto.builder().groupId(group.getGroupId())
                 .name(group.getName())
                 .createdAt(group.getCreatedAt())
-                .groupMembers(group.getMembers().split(" "))
+                .groupMembers(List.of(group.getGroupMembers().toString().split(",")))
                 .build();
     }
-    public String createNewGroup(RequestGroupDto group, String id){
-        var owner = userRepo.findUserByUserId(Long.parseLong(id))
+    public String createNewGroup(RequestGroupDto group, long id){
+        var owner = userRepo.findUserByUserId(id)
                 .orElseThrow( () -> new RuntimeException("user cant be found"));
         var newgroup = Group.builder()
                 .groupOwner(owner)
                 .name(group.getName())
                 .createdAt(group.getCreatedAt())
-                .members(String.join(" ", group.getGroupMembers()))
+                .groupMembers(new ArrayList<>())
                 .transactions(new ArrayList<>())
                 .build();
         var result = groupRepo.findGroupsByGroupOwner(owner);
         result.add(newgroup);
-        owner.setGroupList(result);
-        // var expenseMap = createExpensesTable(newgroup.getMembers().split(" "));
-//        newgroup.setExpensesMap(expenseMap);
+        owner.getGroupList().add(newgroup);
         groupRepo.save(newgroup);
         userRepo.save(owner);
         return newgroup.getGroupId();
@@ -82,8 +80,10 @@ public class GroupService {
         var group = groupRepo.findGroupByGroupId(groupId).orElseThrow(() -> new RuntimeException("cant find group"));
         boolean truth = this.addMemberService.verifyInvite(token, sender, receiver);
         if (truth){
-            var user = this.userRepo.findUserByUsername(sender).orElseThrow(() -> new RuntimeException("cant validate sender"));
-            group.getMembers();
+            var member = this.userRepo.findUserByUsername(receiver)
+                    .orElseThrow(() -> new RuntimeException("cant validate sender"));
+            group.getGroupMembers().add(member);
+           groupRepo.save(group);
         }
     }
 //    public List<Transaction> getTransactionsByGroupId(String groupId){

@@ -5,24 +5,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
-import java.util.Map;
+import java.util.List;
 
 @Converter
-public class ExpensesMapConverter implements AttributeConverter<Map<String, Map<String, Double>>, String> {
+public class MemberListConverter implements AttributeConverter<List<String>, String> {
     public final ObjectMapper objectMapper = new ObjectMapper();
     @Override
-    public String convertToDatabaseColumn(Map<String, Map<String, Double>> attribute) {
+    public String convertToDatabaseColumn(List<String> strings) {
         try{
-            return objectMapper.writeValueAsString(attribute);
+            return objectMapper.writeValueAsString(strings);
         }catch (Exception e){
             throw new IllegalArgumentException("Cannot write json", e);
         }
     }
 
     @Override
-    public Map<String, Map<String, Double>> convertToEntityAttribute(String dbData) {
+    public List<String> convertToEntityAttribute(String string) {
         try {
-            return objectMapper.readValue(dbData, new TypeReference<Map<String, Map<String, Double>>>() {});
+            return objectMapper.readValue(string, new TypeReference<List<String>>() {});
         }catch (Exception e){
             throw new IllegalArgumentException("Cannot convert back to json", e);
         }

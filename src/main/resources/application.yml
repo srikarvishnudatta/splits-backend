@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: ${DB_URL}
+    url: jdbc:postgresql://localhost:5432/splits
     driver-class-name: org.postgresql.Driver
     username: postgres
   jpa:
@@ -14,3 +14,8 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 server:
   port: 8080
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html

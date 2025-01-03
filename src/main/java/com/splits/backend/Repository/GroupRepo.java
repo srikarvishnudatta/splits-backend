@@ -17,7 +17,7 @@ public interface GroupRepo extends JpaRepository<Group, String> {
     List<Group> findGroupsByUserId(@Param("userId") Long userId);
     List<Group> findGroupsByGroupOwner(User owner);
     Optional<Group> findGroupByGroupId(String groupId);
-    @Query(value = "SELECT expenses_map FROM groups WHERE group_id = :groupId", nativeQuery = true)
-    String findExpensesMapByGroupId(@Param("groupId") String groupId);
+
+
 
 }

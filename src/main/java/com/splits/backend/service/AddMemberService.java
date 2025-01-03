@@ -28,8 +28,8 @@ public class AddMemberService {
         message.setTo(receiver);
 
         String token = generateString();
-        String magicLink = "/"+sender + token + "/"+receiver + "/group="+groupId;
-        String subject = sender + "invites you to:  " + groupName;
+        String magicLink = "http://localhost:5173/verify/"+sender + "/" + token + "/"+receiver + "/group="+groupId;
+        String subject = sender + " invites you to:  " + groupName;
         message.setSubject(subject);
         String text = "Click the link to join the group "
                 + groupName + " and the link expires in 10 minutes " + magicLink;

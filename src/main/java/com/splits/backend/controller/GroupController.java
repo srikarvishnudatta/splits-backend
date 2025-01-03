@@ -19,13 +19,13 @@ public class GroupController {
         this.groupService = groupService;
     }
     @GetMapping("/{userId}/groups")
-    public ResponseEntity<List<GroupResponseDto>> getAllGroupsOfUser(@PathVariable String userId){
+    public ResponseEntity<List<GroupResponseDto>> getAllGroupsOfUser(@PathVariable long userId){
         var result = groupService.getAllGroupsByUserId(userId);
         if(result == null) return ResponseEntity.ok().body(List.of());
         return ResponseEntity.ok().body(result);
     }
     @PostMapping("/{userId}/newGroup")
-    public ResponseEntity<String> createNewGroupByUserId(@PathVariable String userId, @RequestBody RequestGroupDto body){
+    public ResponseEntity<String> createNewGroupByUserId(@PathVariable long userId, @RequestBody RequestGroupDto body){
         String result= groupService.createNewGroup(body, userId);
         if (result == null) return ResponseEntity.status(403).body("Forbidden");
         return ResponseEntity.status(201).body("group created " + result);
@@ -34,7 +34,6 @@ public class GroupController {
     @PostMapping("/{groupId}/invite")
     public void invite(@PathVariable String groupId,@RequestBody InviteDto invite){
         this.groupService.sendInvite(invite, groupId);
-
     }
     @DeleteMapping("/groups/{groupId}")
     public void deleteGroupByGroupId(@PathVariable String groupId){

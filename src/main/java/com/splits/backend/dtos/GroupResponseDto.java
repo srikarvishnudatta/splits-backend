@@ -4,8 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDate;
-import java.util.Date;
+import java.util.List;
 
 @Data
 @Builder
@@ -16,5 +15,5 @@ public class GroupResponseDto {
     private String name;
 
     private String createdAt;
-    private String[] groupMembers;
+    private List<String> groupMembers;
 }
