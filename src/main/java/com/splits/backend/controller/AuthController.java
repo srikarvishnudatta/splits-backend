@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthService authService;
 
+
     public AuthController(AuthService authService) {
         this.authService = authService;
     }
@@ -20,13 +21,10 @@ public class AuthController {
     public ResponseEntity<ResponseLoginDto> login(@RequestBody UserDto body){
         try {
             var result = this.authService.loginUser(body);
-            var entity = new ResponseLoginDto("siehtioshoshsoingsn");
-            if (result) {
-                return new ResponseEntity<>(entity, HttpStatus.OK);
-            } else{
-                return new ResponseEntity<>(null, HttpStatus.CONFLICT);
-            }
-        }catch (Exception e){
+            var entity = new ResponseLoginDto(Long.toString(result));
+            return new ResponseEntity<>(entity, HttpStatus.OK);
+        }
+        catch (Exception e){
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }

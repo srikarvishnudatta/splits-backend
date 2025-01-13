@@ -17,10 +17,11 @@ public class AuthService {
         this.userRepo = userRepo;
     }
 
-    public boolean loginUser(UserDto body){
+    public long loginUser(UserDto body){
         Optional<User> user = this.userRepo.findUserByUsername(body.getUsername());
         if (user.isEmpty()) throw new RuntimeException("user doesnt exist");
-        return body.getPassword().equals(user.get().getPassword());
+        if (body.getPassword().equals(user.get().getPassword())) return user.get().getUserId();
+        else throw new RuntimeException("bad credentials");
     }
     public boolean createUser(UserDto body){
         var finalUser = User.builder()

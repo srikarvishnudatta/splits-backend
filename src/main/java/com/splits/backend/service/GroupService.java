@@ -10,6 +10,7 @@ import com.splits.backend.entities.*;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,7 +51,7 @@ public class GroupService {
         var newgroup = Group.builder()
                 .groupOwner(owner)
                 .name(group.getName())
-                .createdAt(group.getCreatedAt())
+                .createdAt(new Date().toString())
                 .groupMembers(new ArrayList<>())
                 .transactions(new ArrayList<>())
                 .build();
