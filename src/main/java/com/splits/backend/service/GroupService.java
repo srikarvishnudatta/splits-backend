@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 @Service
 public class GroupService {
 
@@ -56,11 +57,24 @@ public class GroupService {
                 .transactions(new ArrayList<>())
                 .build();
         var result = groupRepo.findGroupsByGroupOwner(owner);
+
         result.add(newgroup);
         owner.getGroupList().add(newgroup);
         groupRepo.save(newgroup);
         userRepo.save(owner);
         return newgroup.getGroupId();
+    }
+    private InviteStatus[] inviteMembers(String[] members){
+        // send invites for each member in the list!
+        var responses = new InviteStatus[members.length];
+        for (int i=0; i< members.length; i++){
+           var user =  userRepo.findUserByUsername(members[i]).orElse(null);
+           if (user != null) responses[i] = InviteStatus.PENDING;
+
+           else responses[i] = InviteStatus.FAILED;
+        }
+        return responses;
+        // return array of status for each email, success or not.
     }
     public long deleteGroup(String groupId){
         var result = groupRepo.findGroupByGroupId(groupId).orElseThrow(() -> new RuntimeException("cannot"));
