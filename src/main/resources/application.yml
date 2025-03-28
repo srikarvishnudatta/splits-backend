@@ -1,8 +1,9 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/splits
+    url: jdbc:postgresql://fj-aws-database.clcuie260lz3.ca-central-1.rds.amazonaws.com/postgres
     driver-class-name: org.postgresql.Driver
-    username: postgres
+    username: srikar_admin
+    password: Talkingtom$2001
   jpa:
     hibernate:
       ddl-auto: create-drop

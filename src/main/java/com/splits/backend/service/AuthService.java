@@ -1,50 +1,46 @@
 package com.splits.backend.service;
 
-import com.splits.backend.Repository.UserRepo;
-import com.splits.backend.dtos.UserDto;
-import com.splits.backend.entities.User;
+import com.splits.backend.dto.LoginDto;
+import com.splits.backend.dto.NewUserDto;
+import com.splits.backend.modal.Users;
+import com.splits.backend.repository.UsersRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.*;
 
 @Service
 public class AuthService {
-    private final UserRepo userRepo;
-
     @Autowired
-    public AuthService(UserRepo userRepo) {
-        this.userRepo = userRepo;
+    private JwtService jwtService;
+
+    private final UsersRepo repo;
+    @Autowired
+    private AuthenticationManager authManager;
+
+    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
+    public AuthService(UsersRepo repo) {
+        this.repo = repo;
     }
 
-    public long loginUser(UserDto body){
-        Optional<User> user = this.userRepo.findUserByUsername(body.getUsername());
-        if (user.isEmpty()) throw new RuntimeException("user doesnt exist");
-        if (body.getPassword().equals(user.get().getPassword())) return user.get().getUserId();
-        else throw new RuntimeException("bad credentials");
-    }
-    public boolean createUser(UserDto body){
-        var finalUser = User.builder()
-                .username(body.getUsername())
-                .password(body.getPassword())
-                .groupList(new ArrayList<>())
-                .build();
-        try{
-            this.userRepo.save(finalUser);
-            return true;
-        }catch (Exception e){
-            return false;
+    public String verifyLogin(LoginDto dto){
+        try {
+            Authentication auth = authManager.authenticate(new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword()));
+            return jwtService.generateToken(dto.getEmail());
+        }catch (AuthenticationException e){
+            return "Bad Credentials";
         }
     }
-//    private HashMap<String, Map<String, Double>> createExpensesTable(String[] members){
-//        var map = new HashMap<String, Map<String, Double>>();
-//        for (String member: members){
-//            var innerMap = new HashMap<String, Double>();
-//            for (String inner: members){
-//                innerMap.put(inner, 0.0);
-//            }
-//            map.put(member, innerMap);
-//        }
-//        return map;
-//    }
+    public void createUser(NewUserDto dto){
+        var newUser = Users.builder()
+                .email(dto.getEmail())
+                .password(encoder.encode(dto.getPassword()))
+                .firstName(dto.getFirstName())
+                .lastName(dto.getLastName())
+                .build();
+        repo.save(newUser);
+    }
 }

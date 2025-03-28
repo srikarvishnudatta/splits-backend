@@ -1,43 +1,24 @@
 package com.splits.backend.controller;
-import com.splits.backend.dtos.InviteDto;
-import com.splits.backend.dtos.RequestGroupDto;
-import com.splits.backend.dtos.GroupResponseDto;
-import com.splits.backend.service.GroupService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
+@RequestMapping("/groups")
 public class GroupController {
+    @GetMapping("/")
+    public String getAllGroups(){
+        return "Hello groups";
+    }
+    @GetMapping("/{groupId}")
+    public void getGroupById(long id){
 
-    private final GroupService groupService;
+    }
+    @PostMapping("/new")
+    public void createGroup(){}
 
-    @Autowired
-    public GroupController(GroupService groupService) {
-        this.groupService = groupService;
-    }
-    @GetMapping("/{userId}/groups")
-    public ResponseEntity<List<GroupResponseDto>> getAllGroupsOfUser(@PathVariable long userId){
-        var result = groupService.getAllGroupsByUserId(userId);
-        if(result == null) return ResponseEntity.ok().body(List.of());
-        return ResponseEntity.ok().body(result);
-    }
-    @PostMapping("/{userId}/newGroup")
-    public ResponseEntity<String> createNewGroupByUserId(@PathVariable long userId, @RequestBody RequestGroupDto body){
-        String result= groupService.createNewGroup(body, userId);
-        if (result == null) return ResponseEntity.status(403).body("Forbidden");
-        return ResponseEntity.status(201).body("group created " + result);
-    }
-
-    @PostMapping("/{groupId}/invite")
-    public void invite(@PathVariable String groupId,@RequestBody InviteDto invite){
-        this.groupService.sendInvite(invite, groupId);
-    }
-    @DeleteMapping("/groups/{groupId}")
-    public void deleteGroupByGroupId(@PathVariable String groupId){
-       groupService.deleteGroup(groupId);
-    }
+    @PatchMapping("/update")
+    public void updateGroup(){}
+    @DeleteMapping("/delete")
+    public void deleteGroup(){}
 
 }

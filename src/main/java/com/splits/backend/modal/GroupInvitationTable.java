@@ -1,5 +1,6 @@
-package com.splits.backend.entities;
+package com.splits.backend.modal;
 
+import com.splits.backend.modal.enums.Status;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -9,16 +10,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@AllArgsConstructor
-@Builder
-@NoArgsConstructor
 @Entity
-public class GroupInvites {
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+public class GroupInvitationTable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    Long groupInvitationId;
 
-    private InviteStatus status;
+    Status status;
+
+
 
 }
