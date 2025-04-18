@@ -2,7 +2,10 @@ package com.splits.backend.service;
 
 import com.splits.backend.dto.LoginDto;
 import com.splits.backend.dto.NewUserDto;
+import com.splits.backend.modal.GroupInvitationTable;
 import com.splits.backend.modal.Users;
+import com.splits.backend.modal.enums.Status;
+import com.splits.backend.repository.GroupInvitationTableRepo;
 import com.splits.backend.repository.UsersRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,6 +15,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
 public class AuthService {
     @Autowired
@@ -20,6 +25,9 @@ public class AuthService {
     private final UsersRepo repo;
     @Autowired
     private AuthenticationManager authManager;
+
+    @Autowired
+    private GroupInvitationTableRepo invitations;
 
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
     public AuthService(UsersRepo repo) {
@@ -42,5 +50,11 @@ public class AuthService {
                 .lastName(dto.getLastName())
                 .build();
         repo.save(newUser);
+
+    }
+    public void verifyUserService(String email, long expiresAt){
+        var currentTime = new Date().getTime();
+        if (currentTime > expiresAt) return;
+
     }
 }

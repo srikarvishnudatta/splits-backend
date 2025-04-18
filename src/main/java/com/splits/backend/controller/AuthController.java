@@ -26,7 +26,7 @@ public class AuthController {
     public ResponseEntity<String> createUser(@RequestBody NewUserDto newUserDto){
        try {
            authService.createUser(newUserDto);
-           return ResponseEntity.status(201).body("User created");
+           return ResponseEntity.status(201).body("Email verification link has been sent");
        }catch (Exception e){
            return ResponseEntity.status(409).body("User already exists");
        }
@@ -40,8 +40,8 @@ public class AuthController {
 
     }
     @GetMapping("/verify-account")
-    public void verifyUser(){
-
+    public void verifyUser(@RequestParam String email, @RequestParam long expiresAt){
+        authService.verifyUserService(email, expiresAt);
     }
     @GetMapping("/logout")
     public void logoutUser(){

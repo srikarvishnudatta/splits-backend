@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,10 +27,11 @@ public class GroupsTable {
             @Size(max = 10)
     String groupName;
 
+
     @OneToMany
     List<Users> members;
 
-    long createdAt = new Date().getTime();
+    long createdAt;
 
     @OneToMany(mappedBy = "groupMembership", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GroupMembershipTable> groupMemberships = new ArrayList<>();
@@ -37,4 +39,9 @@ public class GroupsTable {
     @OneToMany(mappedBy = "groupsTable", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<VerificationTable> verificationTable = new ArrayList<>();
 
+    @PrePersist
+    protected void onCreate(){
+        createdAt = new Date().getTime();
+        members = new ArrayList<>();
+    }
 }

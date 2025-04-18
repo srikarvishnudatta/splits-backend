@@ -42,4 +42,6 @@ public class Users{
     @OneToMany(mappedBy = "userMembership", cascade = CascadeType.ALL, orphanRemoval = true)
     List<GroupMembershipTable> groupMemberships = new ArrayList<>();
 
+    @OneToMany(mappedBy = "groupId", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<GroupsTable> groups = new ArrayList<>();
 }

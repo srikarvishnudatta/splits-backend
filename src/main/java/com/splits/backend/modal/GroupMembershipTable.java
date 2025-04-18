@@ -17,7 +17,7 @@ public class GroupMembershipTable {
     Long id;
 
     @ManyToOne
-            @JoinColumn(name = "userId",nullable = false)
+    @JoinColumn(name = "userId",nullable = false)
     Users userMembership;
 
     @ManyToOne

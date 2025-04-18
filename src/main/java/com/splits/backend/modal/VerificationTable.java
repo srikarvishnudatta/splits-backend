@@ -1,6 +1,5 @@
 package com.splits.backend.modal;
 
-import com.splits.backend.modal.enums.VerificationType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,20 +19,6 @@ public class VerificationTable {
 
     @Column(nullable = false)
     String email;
-
-    @OneToOne
-    @JoinColumn(name = "sender_id", referencedColumnName = "userId")
-    Users sender;
-
-    @OneToOne
-    @JoinColumn(name = "receiver_id", referencedColumnName = "userId")
-    Users receiver;
-
-    @ManyToOne
-    @JoinColumn(name = "groupId")
-    GroupsTable groupsTable;
-
-    VerificationType verificationType;
 
     long createdAt;
 
